@@ -1,112 +1,145 @@
-import { component$ } from "@builder.io/qwik";
-import type { DocumentHead } from "@builder.io/qwik-city";
+import {
+	component$,
+	createContextId,
+	useContextProvider,
+	useStore,
+	useTask$,
+} from "@builder.io/qwik";
+import { Form, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
+import * as styles from "~/styles/register-form.css";
+import { email, type Input, minLength, object, string } from "valibot";
+import {
+	useForm,
+	InitialValues,
+	formAction$,
+	valiForm$,
+} from "@modular-forms/qwik";
 
-import Counter from "../components/starter/counter/counter";
-import Hero from "../components/starter/hero/hero";
-import Infobox from "../components/starter/infobox/infobox";
-import Starter from "../components/starter/next-steps/next-steps";
+const LoginSchema = object({
+	email: string([
+		minLength(1, "Please enter your email."),
+		email("The email address is badly formatted."),
+	]),
+	password: string([
+		minLength(1, "Please enter your password."),
+		minLength(8, "Your password must have 8 characters or more."),
+	]),
+});
+
+export type authUserType = {
+	uid: string;
+	photoUrl: string;
+	displayName: string;
+	subscribe: boolean;
+};
+
+type LoginForm = Input<typeof LoginSchema> & { user: authUserType };
+
+export const useFormLoader = routeLoader$<
+	InitialValues<LoginForm> & { user: authUserType }
+>(async ({ redirect }) => {
+	return {
+		email: "",
+		password: "",
+		// user,
+	} as unknown as LoginForm;
+});
+
+export const useFormAction = formAction$<LoginForm>(
+	async (values, { redirect }) => {
+		const { email, password } = values;
+		try {
+			// const authUser = await (
+			// 	auth,
+			// 	email,
+			// 	password
+			// );
+		} catch (error: any) {
+			console.error(error);
+		}
+	},
+	valiForm$(LoginSchema)
+);
+
+export const AuthUserContext = createContextId<authUserType>("AuthUserContext");
 
 export default component$(() => {
-  return (
-    <>
-      <Hero />
-      <Starter />
+	const state = useStore<authUserType>({
+		uid: "",
+		photoUrl: "",
+		displayName: "",
+		subscribe: false,
+	});
 
-      <div role="presentation" class="ellipsis"></div>
-      <div role="presentation" class="ellipsis ellipsis-purple"></div>
+	const [loginForm, { Form, Field, FieldArray }] = useForm<LoginForm>({
+		loader: useFormLoader(),
+		validate: valiForm$(LoginSchema),
+		action: useFormAction(),
+	});
 
-      <div class="container container-center container-spacing-xl">
-        <h3>
-          You can <span class="highlight">count</span>
-          <br /> on me
-        </h3>
-        <Counter />
-      </div>
+	const data = useFormLoader();
 
-      <div class="container container-flex">
-        <Infobox>
-          <div q:slot="title" class="icon icon-cli">
-            CLI Commands
-          </div>
-          <>
-            <p>
-              <code>npm run dev</code>
-              <br />
-              Starts the development server and watches for changes
-            </p>
-            <p>
-              <code>npm run preview</code>
-              <br />
-              Creates production build and starts a server to preview it
-            </p>
-            <p>
-              <code>npm run build</code>
-              <br />
-              Creates production build
-            </p>
-            <p>
-              <code>npm run qwik add</code>
-              <br />
-              Runs the qwik CLI to add integrations
-            </p>
-          </>
-        </Infobox>
+	useTask$(async ({ track }) => {
+		track(() => data.value.user);
+		state.uid = data.value.user.uid;
+		state.photoUrl = data.value.user.photoUrl;
+		state.displayName = data.value.user.displayName;
+		state.subscribe = data.value.user.subscribe;
+	});
 
-        <div>
-          <Infobox>
-            <div q:slot="title" class="icon icon-apps">
-              Example Apps
-            </div>
-            <p>
-              Have a look at the <a href="/demo/flower">Flower App</a> or the{" "}
-              <a href="/demo/todolist">Todo App</a>.
-            </p>
-          </Infobox>
+	useContextProvider(AuthUserContext, state);
 
-          <Infobox>
-            <div q:slot="title" class="icon icon-community">
-              Community
-            </div>
-            <ul>
-              <li>
-                <span>Questions or just want to say hi? </span>
-                <a href="https://qwik.builder.io/chat" target="_blank">
-                  Chat on discord!
-                </a>
-              </li>
-              <li>
-                <span>Follow </span>
-                <a href="https://twitter.com/QwikDev" target="_blank">
-                  @QwikDev
-                </a>
-                <span> on Twitter</span>
-              </li>
-              <li>
-                <span>Open issues and contribute on </span>
-                <a href="https://github.com/BuilderIO/qwik" target="_blank">
-                  GitHub
-                </a>
-              </li>
-              <li>
-                <span>Watch </span>
-                <a href="https://qwik.builder.io/media/" target="_blank">
-                  Presentations, Podcasts, Videos, etc.
-                </a>
-              </li>
-            </ul>
-          </Infobox>
-        </div>
-      </div>
-    </>
-  );
+	return (
+		// <div class={styles.box}>
+		<Form class={styles.form}>
+			<div class={styles.center}>
+				<Field name="email">
+					{(field, props) => (
+						<div>
+							<p class={styles.formTitle}>email</p>
+							<input
+								{...props}
+								type="email"
+								value={field.value}
+								class={styles.input}
+							/>
+							{field.error && <div class={styles.errorText}>{field.error}</div>}
+						</div>
+					)}
+				</Field>
+			</div>
+			<div class={styles.center}>
+				<Field name="password">
+					{(field, props) => (
+						<div>
+							<p class={styles.formTitle}>password</p>
+							<input
+								{...props}
+								type="password"
+								value={field.value}
+								class={styles.input}
+							/>
+							{field.error && <div class={styles.errorText}>{field.error}</div>}
+						</div>
+					)}
+				</Field>
+			</div>
+			<div class={styles.center}>
+				<button type="submit" class={styles.button}>
+					Login
+				</button>
+			</div>
+		</Form>
+		// </div>
+	);
 });
 
 export const head: DocumentHead = {
-  title: "Welcome to Qwik",
-  meta: [
-    {
-      name: "description",
-      content: "Qwik site description",
-    },
-  ],
+	title: "Welcome",
+	meta: [
+		{
+			name: "description",
+			content: "Tweet site description",
+		},
+	],
 };
