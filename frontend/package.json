@@ -38,7 +38,10 @@
     "styled-vanilla-extract": "^0.5.4",
     "typescript": "5.3.3",
     "undici": "*",
-    "vite": "^5.0.12",
+    "vite": "^4.5.2",
     "vite-tsconfig-paths": "^4.2.1"
+  },
+  "dependencies": {
+    "valibot": "^0.29.0"
   }
 }
