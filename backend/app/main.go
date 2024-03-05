@@ -16,6 +16,9 @@ func main() {
 	userUsecase := usecase.NewUserUsecase(userRepository, userValidator)
 	userController := controller.NewUserController(userUsecase)
 
-	e := router.NewRouter(userController)
+	commentRepository := repository.NewCommentRepository(db)
+	commentUsecase := usecase.NewCommentUsecase(commentRepository)
+	commentController := controller.NewCommentController(commentUsecase)
+	e := router.NewRouter(userController, commentController)
 	e.Logger.Fatal(e.Start(":8080"))
 }
