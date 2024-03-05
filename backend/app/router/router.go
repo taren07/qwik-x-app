@@ -5,11 +5,12 @@ import (
 	// "net/http"
 	"os"
 
+	echojwt "github.com/labstack/echo-jwt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func NewRouter(uc controller.IUserController) *echo.Echo {
+func NewRouter(uc controller.IUserController, cc controller.ICommentController) *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:3000", os.Getenv("FE_URL")},
@@ -31,5 +32,11 @@ func NewRouter(uc controller.IUserController) *echo.Echo {
 	e.POST("/logout", uc.LogOut)
 	// e.GET("/csrf", uc.CsrfToken)
 
+	c := e.Group("/comments")
+	c.Use(echojwt.WithConfig(echojwt.Config{
+		SigningKey:  []byte(os.Getenv("SECRET")),
+		TokenLookup: "cookie:token",
+	}))
+	c.GET("", cc.GetAllComments)
 	return e
 }
