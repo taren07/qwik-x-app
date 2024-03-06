@@ -27,33 +27,32 @@ const LoginSchema = object({
 });
 
 export type authUserType = {
-	uid: string;
-	photoUrl: string;
-	displayName: string;
-	subscribe: boolean;
+	id: string;
 };
 
-type LoginForm = Input<typeof LoginSchema> & { user: authUserType };
+type LoginForm = Input<typeof LoginSchema>;
 
-export const useFormLoader = routeLoader$<
-	InitialValues<LoginForm> & { user: authUserType }
->(async ({ redirect }) => {
-	return {
-		email: "",
-		password: "",
-		// user,
-	} as unknown as LoginForm;
-});
+export const useFormLoader = routeLoader$<InitialValues<LoginForm>>(
+	async ({ redirect }) => {
+		return {
+			email: "",
+			password: "",
+			// user,
+		} as unknown as LoginForm;
+	}
+);
 
 export const useFormAction = formAction$<LoginForm>(
 	async (values, { redirect }) => {
-		const { email, password } = values;
 		try {
-			// const authUser = await (
-			// 	auth,
-			// 	email,
-			// 	password
-			// );
+			await fetch(`http://localhost:8080/signup`, {
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+				method: "POST",
+				body: JSON.stringify(values),
+			});
 		} catch (error: any) {
 			console.error(error);
 		}
@@ -65,26 +64,13 @@ export const AuthUserContext = createContextId<authUserType>("AuthUserContext");
 
 export default component$(() => {
 	const state = useStore<authUserType>({
-		uid: "",
-		photoUrl: "",
-		displayName: "",
-		subscribe: false,
+		id: "",
 	});
 
 	const [loginForm, { Form, Field, FieldArray }] = useForm<LoginForm>({
 		loader: useFormLoader(),
 		validate: valiForm$(LoginSchema),
 		action: useFormAction(),
-	});
-
-	const data = useFormLoader();
-
-	useTask$(async ({ track }) => {
-		track(() => data.value.user);
-		state.uid = data.value.user.uid;
-		state.photoUrl = data.value.user.photoUrl;
-		state.displayName = data.value.user.displayName;
-		state.subscribe = data.value.user.subscribe;
 	});
 
 	useContextProvider(AuthUserContext, state);
