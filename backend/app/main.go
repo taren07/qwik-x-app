@@ -11,8 +11,8 @@ import (
 
 func main() {
 	db := db.NewDB()
-	userValidator := validator.NewUserValidator()
 	userRepository := repository.NewUserRepository(db)
+	userValidator := validator.NewUserValidator(userRepository)
 	userUsecase := usecase.NewUserUsecase(userRepository, userValidator)
 	userController := controller.NewUserController(userUsecase)
 

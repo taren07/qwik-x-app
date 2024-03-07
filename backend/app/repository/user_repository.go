@@ -9,6 +9,7 @@ import (
 type IUserRepository interface {
 	GetUserByEmail(user *model.User, email string) error
 	CreateUser(user *model.User) error
+	ExistsByEmail(email string) (bool, error)
 }
 
 type userRepository struct {
@@ -31,4 +32,16 @@ func (ur *userRepository) CreateUser(user *model.User) error {
 		return err
 	}
 	return nil
+}
+
+// ExistsByEmail checks if an email already exists in the database
+func (ur *userRepository) ExistsByEmail(email string) (bool, error) {
+	var user model.User
+	if err := ur.db.Where("email = ?", email).First(&user).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
 }
