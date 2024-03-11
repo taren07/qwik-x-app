@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@modular-forms/qwik": "^0.23.1",
+    "qwik-sonner": "^0.2.2",
     "valibot": "^0.29.0"
   }
 }
