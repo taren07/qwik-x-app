@@ -7,11 +7,22 @@ import (
 	"app/router"
 	"app/usecase"
 	"app/validator"
+	"log"
 )
 
 func main() {
 	db := db.NewDB()
-	userRepository := repository.NewUserRepository(db)
+
+	// USE SQL
+	sqlDB, err := db.DB() 
+	if err != nil {
+		log.Fatalf("Failed to connect to the database: %v", err)
+	}
+	userRepository := repository.NewUserRepository(sqlDB)
+
+	// USE GORM
+	// userRepository := repository.NewUserRepository(db)
+
 	userValidator := validator.NewUserValidator(userRepository)
 	userUsecase := usecase.NewUserUsecase(userRepository, userValidator)
 	userController := controller.NewUserController(userUsecase)

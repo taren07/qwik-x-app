@@ -1,8 +1,9 @@
 import { component$ } from "@builder.io/qwik";
+import * as styles from "./post.css";
 
 export default component$(() => {
 	return (
-		<div class="discussion">
+		<div class={styles.discussion}>
 			<div class="discussion__header">
 				<div class="authed-user"></div>
 				<form id="newcomment__form">

@@ -2,8 +2,9 @@ package repository
 
 import (
 	"app/model"
-
-	"gorm.io/gorm"
+	"database/sql"
+	"errors"
+	// "gorm.io/gorm"
 )
 
 type IUserRepository interface {
@@ -13,35 +14,60 @@ type IUserRepository interface {
 }
 
 type userRepository struct {
-	db *gorm.DB
+	// db *gorm.DB
+	db *sql.DB
 }
 
-func NewUserRepository(db *gorm.DB) IUserRepository {
+// func NewUserRepository(db *gorm.DB) IUserRepository {
+// 	return &userRepository{db}
+// }
+
+// func (ur *userRepository) GetUserByEmail(user *model.User, email string) error {
+// 	if err := ur.db.Where("email=?", email).First(user).Error; err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
+
+// func (ur *userRepository) CreateUser(user *model.User) error {
+// 	if err := ur.db.Create(user).Error; err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
+
+// func (ur *userRepository) ExistsByEmail(email string) (bool, error) {
+// 	var user model.User
+// 	if err := ur.db.Where("email = ?", email).First(&user).Error; err != nil {
+// 		if err == gorm.ErrRecordNotFound {
+// 			return false, nil
+// 		}
+// 		return false, err
+// 	}
+// 	return true, nil
+// }
+
+func NewUserRepository(db *sql.DB) IUserRepository {
 	return &userRepository{db}
 }
 
 func (ur *userRepository) GetUserByEmail(user *model.User, email string) error {
-	if err := ur.db.Where("email=?", email).First(user).Error; err != nil {
+	query := `SELECT id, email FROM users WHERE email = ? LIMIT 1`
+	row := ur.db.QueryRow(query, email)
+	if err := row.Scan(&user.ID, &user.Email); err != nil {
+		if err == sql.ErrNoRows {
+			return errors.New("user not found")
+		}
 		return err
 	}
 	return nil
 }
 
 func (ur *userRepository) CreateUser(user *model.User) error {
-	if err := ur.db.Create(user).Error; err != nil {
+	query := `INSERT INTO users (email) VALUES (?, ?)`
+	_, err := ur.db.Exec(query, user.Email)
+	if err != nil {
 		return err
 	}
 	return nil
-}
-
-// ExistsByEmail checks if an email already exists in the database
-func (ur *userRepository) ExistsByEmail(email string) (bool, error) {
-	var user model.User
-	if err := ur.db.Where("email = ?", email).First(&user).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return false, nil
-		}
-		return false, err
-	}
-	return true, nil
 }

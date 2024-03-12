@@ -13,7 +13,7 @@ export const vars = createGlobalTheme(":root", {
 		border: "#DFE3E6",
 		btnBg: "#EDEDED",
 		inputBg: "#F1F2F3",
-		background: "#F8F8FF",
+		background: "#ECF0F4",
 		error: "#e5484d",
 	},
 });
