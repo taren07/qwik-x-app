@@ -71,3 +71,17 @@ func (ur *userRepository) CreateUser(user *model.User) error {
 	}
 	return nil
 }
+
+func (ur *userRepository) ExistsByEmail(email string) (bool, error) {
+	query := `SELECT 1 FROM users WHERE email = ? LIMIT 1`
+	var exists bool
+	row := ur.db.QueryRow(query, email)
+	err := row.Scan(&exists)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
+}
