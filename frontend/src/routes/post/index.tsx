@@ -4,31 +4,33 @@ import * as styles from "./post.css";
 export default component$(() => {
 	return (
 		<container class={styles.container}>
-			<div class={styles.discussion}>
-				<div class={styles.discussionHeader}>
-					<div class="authed-user"></div>
+			<div class={styles.discussionHeader}>
+				<div class={styles.discussion}>
+					{/* <div class="authed-user">
+						<div class={styles.comment}>
+							<div class={styles.avatar}></div>
+							<div class="comment__body">
+								<div class={styles.commentAuthor}>
+									<time class={styles.commentDate}></time>
+								</div>
+								<div class={styles.commentText}></div>
+							</div>
+						</div>
+					</div> */}
+
 					<form id="newcomment__form">
-						<textarea
-							tabindex="1"
-							cols="150"
-							rows="4"
-							minlength="5"
-							required
-							placeholder="Write a comment"
-						></textarea>
-						<div class="newcomment__toolbar">
+						<textarea required placeholder="Write a comment"></textarea>
+						<div class={styles.newCommentToolbar}>
 							<button
 								id="reset-button"
-								class="button--secondary"
-								tabindex="3"
+								class={styles.buttonPrimary}
 								type="button"
 							>
 								Reset
 							</button>
 							<button
 								id="confirm-button"
-								class="button--primary"
-								tabindex="2"
+								class={styles.buttonPrimary}
 								type="submit"
 							>
 								Comment
