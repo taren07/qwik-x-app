@@ -3,39 +3,43 @@ import * as styles from "./post.css";
 
 export default component$(() => {
 	return (
-		<div class={styles.discussion}>
-			<div class="discussion__header">
-				<div class="authed-user"></div>
-				<form id="newcomment__form">
-					<textarea
-						tabindex="1"
-						cols="150"
-						rows="4"
-						minlength="5"
-						required
-						placeholder="Write a comment"
-					></textarea>
-					<div class="newcomment__toolbar">
-						<button
-							id="reset-button"
-							class="button--secondary"
-							tabindex="3"
-							type="button"
-						>
-							Reset
-						</button>
-						<button
-							id="confirm-button"
-							class="button--primary"
-							tabindex="2"
-							type="submit"
-						>
-							Comment
-						</button>
-					</div>
-				</form>
+		<container class={styles.container}>
+			<div class={styles.discussion}>
+				<div class={styles.discussionHeader}>
+					<div class="authed-user"></div>
+					<form id="newcomment__form">
+						<textarea
+							tabindex="1"
+							cols="150"
+							rows="4"
+							minlength="5"
+							required
+							placeholder="Write a comment"
+						></textarea>
+						<div class="newcomment__toolbar">
+							<button
+								id="reset-button"
+								class="button--secondary"
+								tabindex="3"
+								type="button"
+							>
+								Reset
+							</button>
+							<button
+								id="confirm-button"
+								class="button--primary"
+								tabindex="2"
+								type="submit"
+							>
+								Comment
+							</button>
+						</div>
+					</form>
+				</div>
+				<div class="discussion__comments">
+					{/* <!-- will be generated --> */}
+				</div>
 			</div>
-			<div class="discussion__comments">{/* <!-- will be generated --> */}</div>
-		</div>
+		</container>
 	);
 });

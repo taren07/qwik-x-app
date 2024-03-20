@@ -8,7 +8,7 @@ export const discussion = style({
 	maxWidth: "25rem",
 });
 
-export const bodyStyle = style({
+export const container = style({
 	display: "flex",
 	justifyContent: "center",
 	alignItems: "center",
