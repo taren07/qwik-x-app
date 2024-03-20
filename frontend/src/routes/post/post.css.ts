@@ -7,3 +7,14 @@ export const discussion = style({
 	minWidth: "17.5rem",
 	maxWidth: "25rem",
 });
+
+export const bodyStyle = style({
+	display: "flex",
+	justifyContent: "center",
+	alignItems: "center",
+	fontSize: "16px",
+	fontFamily: `'Poppins', sans-serif`,
+	height: "100vh",
+	width: "100vw",
+	backgroundColor: "#ECF0F4",
+});
