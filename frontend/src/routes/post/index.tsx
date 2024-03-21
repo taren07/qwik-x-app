@@ -6,7 +6,7 @@ export default component$(() => {
 		<container class={styles.container}>
 			<div class={styles.discussionHeader}>
 				<div class={styles.discussion}>
-					{/* <div class="authed-user">
+					<div class="authed-user">
 						<div class={styles.comment}>
 							<div class={styles.avatar}></div>
 							<div class="comment__body">
@@ -16,7 +16,7 @@ export default component$(() => {
 								<div class={styles.commentText}></div>
 							</div>
 						</div>
-					</div> */}
+					</div>
 
 					<form id="newcomment__form">
 						<textarea required placeholder="Write a comment"></textarea>
